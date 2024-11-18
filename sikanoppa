@@ -1,0 +1,173 @@
+--Luo tietokanta Sikanoppa
+CREATE DATABASE Sikanoppa;
+
+
+--Ota käyttöön tietokanta Sikanoppa
+USE Sikanoppa;
+
+
+--Luo taulu Pelaajat
+CREATE TABLE Pelaajat(
+	pelaajaID int PRIMARY KEY auto_increment,
+	nimi char(30)
+);
+
+--Luo taulu Tulokset
+CREATE TABLE Tulokset(
+	tulosID int PRIMARY KEY auto_increment,
+	peli int,
+	pelaaja char(30),
+	pisteet int
+);
+
+--Luo taulu Pelit
+CREATE TABLE Pelit(
+	peliID int PRIMARY KEY auto_increment,
+	paivamaara DATE,
+	tulos int,
+	muuta char(30)
+);
+
+--Tiedot tauluihin
+
+INSERT INTO Pelaajat(nimi)
+	VALUES
+	('Joni'),
+	('Maisa'),
+	('Lasse'),
+	('Hanna'),
+	('Nikke'),
+	('Kone')
+;
+
+INSERT INTO Tulokset(peli, pelaaja, pisteet)
+	VALUES
+	( 1, 1, 57),
+	( 1, 2, 3),
+	( 2, 4, 23),
+	( 2, 5, 17),
+	( 3, 1, 34),
+	( 3, 6, 89),
+	( 4, 3, 1),
+	( 4, 4, 56),
+	( 5, 5, 46),
+	( 5, 6, 40)
+;
+
+INSERT INTO Pelit(paivamaara, muuta)
+	VALUES
+	('2020-03-30', 'maisan kaa'),
+	('2020-03-29', 'henkka soitti'),
+	('2020-03-29', 'kone voitolla'),
+	('2020-02-20', 'aikalisä'),
+	('2020-02-19', 'jännä')
+;
+
+
+
+--Listaa taulun Pelit sisältö
+
+select * FROM Pelit;
+
+/*
++--------+------------+---------------+
+| peliID | paivamaara | muuta         |
++--------+------------+---------------+
+|      1 | 2020-03-30 | maisan kaa    |
+|      2 | 2020-03-29 | henkka soitti |
+|      3 | 2020-03-29 | kone voitolla |
+|      4 | 2020-02-20 | aikalisä      |
+|      5 | 2020-02-19 | jännä         |
++--------+------------+---------------+
+*/
+
+--Mitä pelejä on pelattu 29.3.2020? Näytä tunniste.
+
+select peliID FROM Pelit
+	WHERE
+	paivamaara = '2020-03-29'
+;
+
+/*
++--------+
+| peliID |
++--------+
+|      2 |
+|      3 |
++--------+
+*/
+
+--Mikä on tilanne 20.2.2020 pelissä? Näytä pelin tunniste ja pisteet.
+
+select peliID, pisteet FROM Pelit, Tulokset
+	WHERE
+	peliID = peli AND
+	paivamaara = '2020-02-20'
+;
+
+/*
++--------+---------+
+| peliID | pisteet |
++--------+---------+
+|      4 |       1 |
+|      4 |      56 |
++--------+---------+
+*/
+
+--Muuta edellistä siten, että se näyttää tunnisteen sijaan pelaajan nimen. Eli näytä pelaajien nimet ja pisteet.
+
+select nimi, pisteet FROM Pelaajat, Tulokset, Pelit
+	WHERE
+	pelaajaID = pelaaja AND
+	peliID = peli AND
+	paivamaara = '2020-02-20'
+;
+
+/*
++-------+---------+
+| nimi  | pisteet |
++-------+---------+
+| Lasse |       1 |
+| Hanna |      56 |
++-------+---------+
+*/
+
+--Listaa kaikki pelit, joissa toisena pelaajana on Nikke. Näytä pelin tunniste ja päivä.
+
+select peliID, paivamaara FROM Pelaajat, Tulokset, Pelit
+	WHERE
+	pelaajaID = pelaaja AND
+	peliID = peli AND
+	nimi = 'Nikke'
+;
+
+/*
++--------+------------+
+| peliID | paivamaara |
++--------+------------+
+|      2 | 2020-03-29 |
+|      5 | 2020-02-19 |
++--------+------------+
+*/
+
+--Listaa kaikki pelaajat, jotka ovat olleet pelaamassa maaliskuussa. Näytä pelaajan nimi ja pelipäivä. Ehdossa voi käyttää > -merkkiä ja verrata helmikuun viimeiseen päivään  (.... > '2020-02-29').
+
+select DISTINCT nimi, paivamaara FROM Pelaajat, Tulokset, Pelit
+	WHERE
+	pelaajaID = pelaaja AND
+	peliID = peli AND
+	paivamaara > '2020-02-29'
+;
+
+/*
++-------+------------+
+| nimi  | paivamaara |
++-------+------------+
+| Joni  | 2020-03-30 |
+| Maisa | 2020-03-30 |
+| Hanna | 2020-03-29 |
+| Nikke | 2020-03-29 |
+| Joni  | 2020-03-29 |
+| Kone  | 2020-03-29 |
++-------+------------+
+*/
